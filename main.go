@@ -18,28 +18,35 @@ const (
 )
 
 func main() {
-	if err := run(); err != nil {
+	question, err := parseArgs()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	}
+
+	answer, err := run(question)
+	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+	fmt.Println("Question: ", question)
+	fmt.Println("Answer: ", answer)
 }
 
-func run() error {
-	question := parseArgs()
-	fmt.Println("Question:", question)
-
+func run(question string) (string, error) {
 	llm, err := openai.New()
 	if err != nil {
-		return err
+		return "", err
 	}
 
+	// Clones docs from the `REPO_URL`, then loads them into `[]schema.Document`
+	// for the llm.
 	err = downloadDocuments()
 	if err != nil {
-		fmt.Println(err)
+		return "", err
 	}
 	docs, err := loadDocuments()
 	if err != nil {
-		fmt.Println(err)
+		return "", err
 	}
 
 	// Stuffs all documents into the prompt of the llm, and returns an answer to
@@ -50,25 +57,34 @@ func run() error {
 		"question":        question,
 	})
 	if err != nil {
-		return err
+		return "", err
 	}
-	fmt.Println(answer)
-	return nil
+
+	// `answer["text"]` of type `any` needs to be converted to a `string`.
+	answerString, ok := answer["text"].(string)
+	if !ok {
+		return "", fmt.Errorf("failed to convert answer to string")
+	}
+	return answerString, nil
 }
 
-func parseArgs() string {
+// parseArgs parses the command line arguments. It expects the question to the
+// llm as the sole argument.
+func parseArgs() (string, error) {
 	args := os.Args
-
 	if len(args) != 2 {
-		fmt.Println("Usage: go run main.go <question>")
-		os.Exit(1)
+		return "", fmt.Errorf("usage: go run main.go <question>")
 	}
-
-	return args[1]
+	return args[1], nil
 }
 
 // downloadDocuments clones the REPO_URL to the DATA_DIR.
 func downloadDocuments() error {
+	if _, err := os.Stat(DATA_DIR); !os.IsNotExist(err) {
+		fmt.Println("Directory already exists. Skipping clone.")
+		return nil
+	}
+
 	cmd := exec.Command("git", "clone", REPO_URL, DATA_DIR)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
