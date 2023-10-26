@@ -2,7 +2,12 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"html"
+	"io"
+	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -118,4 +123,39 @@ func loadDocuments() ([]schema.Document, error) {
 	}
 
 	return documents, nil
+}
+
+// GCP Cloud Function
+//
+// Example:
+//
+//	curl -L 'https://us-west1-thomasvn0.cloudfunctions.net/CLOUD_FUNCTION_NAME' \
+//	-H 'Content-Type: application/json' \
+//	-d '{
+//	    "message": "THE QUESTION GOES HERE"
+//	}'
+func Chat(w http.ResponseWriter, r *http.Request) {
+	var d struct {
+		Message string `json:"message"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&d); err != nil {
+		switch err {
+		case io.EOF:
+			fmt.Fprint(w, "Example usage: curl -L 'https://us-west1-thomasvn0.cloudfunctions.net/CLOUD_FUNCTION_NAME' -H 'Content-Type: application/json' -d '{\"message\": \"THE QUESTION GOES HERE\"}'")
+			return
+		default:
+			log.Printf("json.NewDecoder: %v", err)
+			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+			return
+		}
+	}
+
+	result, err := run(d.Message)
+	if err != nil {
+		log.Printf("run: %v", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError)+": "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	fmt.Fprint(w, html.EscapeString(result))
 }
