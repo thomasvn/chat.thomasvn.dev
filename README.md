@@ -28,7 +28,7 @@ gcloud functions deploy HelloWorld \
 <!-- 
 IDEAS
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
-  - Expose it as an API. Serverless.
+  - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
   - Make it a chat interface, where you can follow up on questions
   - https://github.com/tmc/langchaingo/blob/main/examples/document-qa-example/document_qa.go
   - https://github.com/tmc/langchaingo/blob/main/examples/chroma-vectorstore-example/chroma_vectorstore_example.go
@@ -39,12 +39,16 @@ IDEAS
 DONE
 - Questions are parameterized and passed as CLI Args
 - Graceful failure when cloning the repo
+- Expose it as an API via GCP Cloud Functions
+-->
 
+<!-- 
+Memory limit of 128 MiB exceeded with 131 MiB used. Consider increasing the memory limit
+Function execution took 40880 ms, finished with status: 'connection error'
 -->
 
 <!-- 
 // API returned unexpected status code: 400: This model's maximum context length
 // is 4097 tokens. However, your messages resulted in 11030 tokens. Please
 // reduce the length of the messages.
-
 -->

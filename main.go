@@ -18,8 +18,8 @@ import (
 )
 
 const (
-	REPO_URL = "https://github.com/thomasvn/content"
-	DATA_DIR = "./data"
+	REPO_URL = "github.com/thomasvn/content.git"
+	DATA_DIR = "/tmp/data"
 )
 
 func main() {
@@ -90,7 +90,12 @@ func downloadDocuments() error {
 		return nil
 	}
 
-	cmd := exec.Command("git", "clone", REPO_URL, DATA_DIR)
+	if os.Getenv("GITHUB_PERSONAL_ACCESS_TOKEN") == "" {
+		return fmt.Errorf("GITHUB_PERSONAL_ACCESS_TOKEN environment variable not set")
+	}
+
+	var repoUrlWithToken = "https://x-access-token:" + os.Getenv("GITHUB_PERSONAL_ACCESS_TOKEN") + "@" + REPO_URL
+	cmd := exec.Command("git", "clone", repoUrlWithToken, DATA_DIR)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("failed to clone repository: %v, output: %s", err, output)
