@@ -12,6 +12,7 @@ import (
 	"os/exec"
 	"path/filepath"
 
+	"github.com/mmcdole/gofeed"
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms/openai"
 	"github.com/tmc/langchaingo/schema"
@@ -23,18 +24,41 @@ const (
 )
 
 func main() {
-	question, err := parseArgs()
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-	}
-
-	answer, err := run(question)
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	if len(os.Args) != 2 {
+		fmt.Println("usage: go run main.go <question>")
 		os.Exit(1)
 	}
-	fmt.Println("Question: ", question)
-	fmt.Println("Answer: ", answer)
+
+	docs := parseFeed("https://thomasvn.dev/feed/")
+	// downloadDocuments()  // legacy
+	// docs, _ := loadDocuments()  // legacy
+
+	// Suitable for a small number of documents.
+	llm, _ := openai.New()
+	stuffQAChain := chains.LoadStuffQA(llm)
+	answer, _ := chains.Call(context.Background(), stuffQAChain, map[string]any{
+		"input_documents": docs,
+		"question":        os.Args[1],
+	})
+
+	fmt.Println("Question: ", os.Args[1])
+	fmt.Println("Answer: ", answer["text"].(string))
+}
+
+func parseFeed(url string) []schema.Document {
+	fp := gofeed.NewParser()
+	feed, _ := fp.ParseURL(url)
+
+	results := []schema.Document{}
+	for _, item := range feed.Items {
+		content := "TITLE: " + item.Title + "\n\n" + html.UnescapeString(item.Content)
+		d := schema.Document{
+			PageContent: content,
+			Metadata:    map[string]any{"title": item.Title, "link": item.Link, "updated": item.Updated, "published": item.Published},
+		}
+		results = append(results, d)
+	}
+	return results
 }
 
 func run(question string) (string, error) {
@@ -71,16 +95,6 @@ func run(question string) (string, error) {
 		return "", fmt.Errorf("failed to convert answer to string")
 	}
 	return answerString, nil
-}
-
-// parseArgs parses the command line arguments. It expects the question to the
-// llm as the sole argument.
-func parseArgs() (string, error) {
-	args := os.Args
-	if len(args) != 2 {
-		return "", fmt.Errorf("usage: go run main.go <question>")
-	}
-	return args[1], nil
 }
 
 // downloadDocuments clones the REPO_URL to the DATA_DIR.
