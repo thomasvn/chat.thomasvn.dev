@@ -27,6 +27,7 @@ gcloud functions deploy HelloWorld \
 
 <!-- 
 IDEAS
+- Google Cloud Function v2. Deploy via API. Restructure code. https://cloud.google.com/functions/docs/create-deploy-http-go
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
   - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
   - Make it a chat interface, where you can follow up on questions
