@@ -6,7 +6,7 @@ Local
 
 ```sh
 source .env
-go run main.go "What kinds of topics regarding containers has Thomas written about"
+go run pkg/cmd/main.go "Provide a list of all the blog posts Thomas has written. Then recommend 5 more blogs that should be written"
 ```
 
 ```txt
@@ -17,12 +17,18 @@ Answer:  Thomas has written about topics such as "squashing containers" and "usi
 GCloud Function
 
 ```sh
-source .env
-gcloud functions deploy HelloWorld \
-  --runtime go113 \
+gcloud functions deploy thomasvn-chat \
+  --gen2 \
+  --runtime=go122 \
+  --region=us-west1 \
+  --source=. \
+  --entry-point=Chat \
   --trigger-http \
   --allow-unauthenticated \
-  --update-env-vars MY_VARIABLE_NAME=new_value
+  --build-env-vars-file=.env.yaml
+
+gcloud functions describe thomasvn-chat \
+  --region=us-west1
 ```
 
 <!-- 

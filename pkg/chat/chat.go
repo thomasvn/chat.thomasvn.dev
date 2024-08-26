@@ -1,4 +1,4 @@
-package main
+package chat
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
 	"github.com/mmcdole/gofeed"
@@ -47,7 +46,7 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	docs := parseFeed("https://thomasvn.dev/feed/")
+	docs := ParseFeed("https://thomasvn.dev/feed/")
 
 	llm, _ := openai.New()
 	stuffQAChain := chains.LoadStuffQA(llm)
@@ -59,27 +58,7 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello, %s!", html.EscapeString(answer["text"].(string)))
 }
 
-func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("usage: go run main.go <question>")
-		os.Exit(1)
-	}
-
-	docs := parseFeed("https://thomasvn.dev/feed/")
-
-	// Suitable for a small number of documents.
-	llm, _ := openai.New()
-	stuffQAChain := chains.LoadStuffQA(llm)
-	answer, _ := chains.Call(context.Background(), stuffQAChain, map[string]any{
-		"input_documents": docs,
-		"question":        os.Args[1],
-	})
-
-	fmt.Println("Question: ", os.Args[1])
-	fmt.Println("Answer: ", answer["text"].(string))
-}
-
-func parseFeed(url string) []schema.Document {
+func ParseFeed(url string) []schema.Document {
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 
