@@ -55,7 +55,7 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 		"question":        d.Message,
 	})
 
-	fmt.Fprintf(w, "Hello, %s!", html.EscapeString(answer["text"].(string)))
+	fmt.Fprintf(w, "%s", answer["text"].(string))
 }
 
 func ParseFeed(url string) []schema.Document {

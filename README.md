@@ -9,12 +9,7 @@ source .env
 go run pkg/cmd/main.go "Provide a list of all the blog posts Thomas has written. Then recommend 5 more blogs that should be written"
 ```
 
-```txt
-Question:  What kinds of topics regarding containers has Thomas written about
-Answer:  Thomas has written about topics such as "squashing containers" and "using Homebrew as a package manager for macOS."
-```
-
-GCloud Function
+GCP Cloud Run Function
 
 ```sh
 gcloud functions deploy thomasvn-chat \
@@ -25,37 +20,36 @@ gcloud functions deploy thomasvn-chat \
   --entry-point=Chat \
   --trigger-http \
   --allow-unauthenticated \
-  --build-env-vars-file=.env.yaml
+  --memory=128Mi \
+  --cpu=.083 \
+  --env-vars-file=.env.yaml
 
-gcloud functions describe thomasvn-chat \
-  --region=us-west1
+gcloud functions describe thomasvn-chat --region=us-west1
+gcloud functions delete thomasvn-chat --region=us-west1
 ```
+
+## References
+
+- Google Cloud Function v2
+  - https://cloud.google.com/functions/docs/create-deploy-http-go
+  - https://github.com/GoogleCloudPlatform/functions-framework-go
 
 <!-- 
 IDEAS
-- Google Cloud Function v2. Deploy via API. Restructure code. https://cloud.google.com/functions/docs/create-deploy-http-go
+- Move GoogleCloudFunction into its own package? Would that still work?
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
   - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
   - Make it a chat interface, where you can follow up on questions
   - https://github.com/tmc/langchaingo/blob/main/examples/document-qa-example/document_qa.go
   - https://github.com/tmc/langchaingo/blob/main/examples/chroma-vectorstore-example/chroma_vectorstore_example.go
 - Pull contents of all Kubecost codebases & docs
+- Build as a serverless container
 -->
 
 <!-- 
-DONE
-- Questions are parameterized and passed as CLI Args
-- Graceful failure when cloning the repo
+DONE (most recent to least recent)
+- Google Cloud Function v2. Deploy via API. Restructure code. https://cloud.google.com/functions/docs/create-deploy-http-go
 - Expose it as an API via GCP Cloud Functions
--->
-
-<!-- 
-Memory limit of 128 MiB exceeded with 131 MiB used. Consider increasing the memory limit
-Function execution took 40880 ms, finished with status: 'connection error'
--->
-
-<!-- 
-// API returned unexpected status code: 400: This model's maximum context length
-// is 4097 tokens. However, your messages resulted in 11030 tokens. Please
-// reduce the length of the messages.
+- Graceful failure when cloning the repo
+- Questions are parameterized and passed as CLI Args
 -->

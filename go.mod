@@ -1,4 +1,4 @@
-module main
+module thomasvn.dev/chat
 
 go 1.22.0
 

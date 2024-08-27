@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"main/pkg/chat"
+	chat "thomasvn.dev/chat"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/funcframework"
 	"github.com/tmc/langchaingo/chains"
@@ -25,7 +25,6 @@ func localrun() {
 
 	docs := chat.ParseFeed("https://thomasvn.dev/feed/")
 
-	// Suitable for a small number of documents.
 	llm, _ := openai.New()
 	stuffQAChain := chains.LoadStuffQA(llm)
 	answer, _ := chains.Call(context.Background(), stuffQAChain, map[string]any{
