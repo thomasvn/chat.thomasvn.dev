@@ -36,6 +36,10 @@ gcloud functions delete thomasvn-chat --region=us-west1
 
 <!-- 
 IDEAS
+- Host the `main.html` via GCS Bucket. Automate.
+- Enhance responses provided by OpenAI. Give the bot the ability to extrapolate.
+- Actual chat functionality. Ability to go back and forth with messages.
+- Translate the HTML docs to Markdown?
 - Move GoogleCloudFunction into its own package? Would that still work?
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
   - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
