@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"html"
 	"io"
 	"log"
 	"net/http"
 
 	"github.com/GoogleCloudPlatform/functions-framework-go/functions"
+	md "github.com/JohannesKaufmann/html-to-markdown"
 	"github.com/mmcdole/gofeed"
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms/openai"
@@ -72,7 +72,9 @@ func ParseFeed(url string) []schema.Document {
 
 	results := []schema.Document{}
 	for _, item := range feed.Items {
-		content := "TITLE: " + item.Title + "\n\n" + html.UnescapeString(item.Content)
+		converter := md.NewConverter("", true, nil)
+		markdown, _ := converter.ConvertString(item.Content)
+		content := "TITLE: " + item.Title + "\n\n" + markdown
 		d := schema.Document{
 			PageContent: content,
 			Metadata:    map[string]any{"title": item.Title, "link": item.Link, "updated": item.Updated, "published": item.Published},

@@ -1,5 +1,7 @@
 # chat.thomasvn.dev
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e0a803e1-861d-4f5f-89f0-e65771791719/deploy-status)](https://app.netlify.com/sites/thomasvn/deploys)
+
 ## Demo
 
 https://chat.thomasvn.dev
@@ -10,7 +12,7 @@ Local
 
 ```sh
 source .env
-go run pkg/cmd/main.go "Provide a list of all the blog posts Thomas has written. Then recommend 5 more blogs that should be written"
+go run pkg/cmd/main.go "Provide a list of all the blog posts Thomas has written. Then recommend 5 more blogs that should be written."
 ```
 
 GCP Cloud Run Function
@@ -40,10 +42,9 @@ gcloud functions delete thomasvn-chat --region=us-west1
 
 <!-- 
 IDEAS
-- Host the `main.html` via GCS Bucket. Automate.
+- Translate the HTML docs to Markdown? Reduces tokens?
 - Enhance responses provided by OpenAI. Give the bot the ability to extrapolate.
 - Actual chat functionality. Ability to go back and forth with messages.
-- Translate the HTML docs to Markdown?
 - Move GoogleCloudFunction into its own package? Would that still work?
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
   - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
@@ -56,6 +57,7 @@ IDEAS
 
 <!-- 
 DONE (most recent to least recent)
+- Deploy `chat.thomasvn.dev` site via Netlify
 - Google Cloud Function v2. Deploy via API. Restructure code. https://cloud.google.com/functions/docs/create-deploy-http-go
 - Expose it as an API via GCP Cloud Functions
 - Graceful failure when cloning the repo

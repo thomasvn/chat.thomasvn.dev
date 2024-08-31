@@ -6,15 +6,17 @@ toolchain go1.22.5
 
 require (
 	github.com/GoogleCloudPlatform/functions-framework-go v1.9.0
+	github.com/JohannesKaufmann/html-to-markdown v1.6.0
 	github.com/mmcdole/gofeed v1.3.0
 	github.com/tmc/langchaingo v0.1.12
 )
 
 require (
-	cloud.google.com/go/functions v1.16.6 // indirect
+	cloud.google.com/go/functions v1.19.0 // indirect
+	dario.cat/mergo v1.0.1 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.2.1 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
+	github.com/Masterminds/semver/v3 v3.3.0 // indirect
+	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/PuerkitoBio/goquery v1.9.2 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/cloudevents/sdk-go/v2 v2.15.2 // indirect
@@ -39,9 +41,9 @@ require (
 	github.com/spf13/cast v1.7.0 // indirect
 	github.com/yargevad/filepathx v1.0.0 // indirect
 	go.starlark.net v0.0.0-20240725214946-42030a7cedce // indirect
-	go.uber.org/atomic v1.4.0 // indirect
-	go.uber.org/multierr v1.1.0 // indirect
-	go.uber.org/zap v1.10.0 // indirect
+	go.uber.org/atomic v1.11.0 // indirect
+	go.uber.org/multierr v1.11.0 // indirect
+	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.26.0 // indirect
 	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948 // indirect
 	golang.org/x/net v0.28.0 // indirect
