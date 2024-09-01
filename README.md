@@ -4,18 +4,13 @@
 
 ## Demo
 
-https://chat.thomasvn.dev
+<https://chat.thomasvn.dev>
 
-## Usage
+![Demo of chat.thomasvn.dev](./demo.png)
 
-Local
+## Setup
 
-```sh
-source .env
-go run pkg/cmd/main.go "Provide a list of all the blog posts Thomas has written. Then recommend 5 more blogs that should be written."
-```
-
-GCP Cloud Run Function
+Deploying the GCP Cloud Run Funciton:
 
 ```sh
 gcloud functions deploy thomasvn-chat \
@@ -34,16 +29,26 @@ gcloud functions describe thomasvn-chat --region=us-west1
 gcloud functions delete thomasvn-chat --region=us-west1
 ```
 
+Local Testing:
+
+```sh
+export OPENAI_API_KEY=""
+export OPENAI_MODEL="gpt-4o-mini"
+go run pkg/cmd/main.go "What has Thomas written about regarding Formula1?"
+```
+
 ## References
 
-- Google Cloud Function v2
-  - https://cloud.google.com/functions/docs/create-deploy-http-go
-  - https://github.com/GoogleCloudPlatform/functions-framework-go
+- OpenAI Models (GPT-4o mini recommended)
+  - <https://platform.openai.com/docs/models>
+- LangChain
+  - <https://github.com/tmc/langchaingo>
+- Google Cloud Run Function v2
+  - <https://cloud.google.com/functions/docs/create-deploy-http-go>
+  - <https://github.com/GoogleCloudPlatform/functions-framework-go>
 
 <!-- 
 IDEAS
-- Translate the HTML docs to Markdown? Reduces tokens?
-- Enhance responses provided by OpenAI. Give the bot the ability to extrapolate.
 - Actual chat functionality. Ability to go back and forth with messages.
 - Move GoogleCloudFunction into its own package? Would that still work?
 - RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
@@ -57,6 +62,8 @@ IDEAS
 
 <!-- 
 DONE (most recent to least recent)
+- Enhance responses provided by OpenAI. Give the bot the ability to extrapolate. Custom prompt. GPT4o mini.
+- Translate the HTML docs to Markdown. Reduces tokens.
 - Deploy `chat.thomasvn.dev` site via Netlify
 - Google Cloud Function v2. Deploy via API. Restructure code. https://cloud.google.com/functions/docs/create-deploy-http-go
 - Expose it as an API via GCP Cloud Functions

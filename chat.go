@@ -13,8 +13,17 @@ import (
 	"github.com/mmcdole/gofeed"
 	"github.com/tmc/langchaingo/chains"
 	"github.com/tmc/langchaingo/llms/openai"
+	"github.com/tmc/langchaingo/prompts"
 	"github.com/tmc/langchaingo/schema"
 )
+
+const FeedURL = "https://thomasvn.dev/feed/"
+const MyStuffQAPromptTemplate = `Use the following pieces of context to answer the question at the end. If you're unsure about the answer, provide your best guess based on the available information. Always return a response, even if you're not completely certain. If the context doesn't contain relevant information, use your general knowledge to provide a plausible answer. Clearly state when you're making an educated guess.
+
+{{.context}}
+
+Question: {{.question}}
+Helpful Answer:`
 
 func init() {
 	functions.HTTP("Chat", Chat)
@@ -24,7 +33,7 @@ func init() {
 //
 // Example:
 //
-//	curl -L 'https://us-west1-thomasvn0.cloudfunctions.net/CLOUD_FUNCTION_NAME' \
+//	curl -L 'https://us-west1-thomasvn0.cloudfunctions.net/thomasvn-chat' \
 //	-H 'Content-Type: application/json' \
 //	-d '{
 //	    "message": "THE QUESTION GOES HERE"
@@ -54,10 +63,18 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	docs := ParseFeed("https://thomasvn.dev/feed/")
+	docs := ParseFeed(FeedURL)
 
 	llm, _ := openai.New()
-	stuffQAChain := chains.LoadStuffQA(llm)
+	qaPromptSelector := chains.ConditionalPromptSelector{
+		DefaultPrompt: prompts.NewPromptTemplate(
+			MyStuffQAPromptTemplate,
+			[]string{"context", "question"},
+		),
+	}
+	prompt := qaPromptSelector.GetPrompt(llm)
+	llmChain := chains.NewLLMChain(llm, prompt)
+	stuffQAChain := chains.NewStuffDocuments(llmChain)
 	answer, _ := chains.Call(context.Background(), stuffQAChain, map[string]any{
 		"input_documents": docs,
 		"question":        d.Message,
@@ -74,7 +91,8 @@ func ParseFeed(url string) []schema.Document {
 	for _, item := range feed.Items {
 		converter := md.NewConverter("", true, nil)
 		markdown, _ := converter.ConvertString(item.Content)
-		content := "TITLE: " + item.Title + "\n\n" + markdown
+		metadata := "TITLE: " + item.Title + " LINK: " + item.Link + " UPDATED: " + item.Updated + " PUBLISHED: " + item.Published + "\n\n"
+		content := metadata + markdown
 		d := schema.Document{
 			PageContent: content,
 			Metadata:    map[string]any{"title": item.Title, "link": item.Link, "updated": item.Updated, "published": item.Published},

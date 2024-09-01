@@ -15,7 +15,7 @@ import (
 
 func main() {
 	localrun()
-	// localserver()
+	localserver()
 }
 
 func localrun() {
@@ -24,23 +24,13 @@ func localrun() {
 		os.Exit(1)
 	}
 
-	docs := chat.ParseFeed("https://thomasvn.dev/feed/")
+	docs := chat.ParseFeed(chat.FeedURL)
 
 	llm, _ := openai.New()
 
-	// PREVIOUS
-	// stuffQAChain := chains.LoadStuffQA(llm)
-
-	// TEST
-	const myStuffQATemplate = `Use the following pieces of context to answer the question at the end. If you're unsure about the answer, provide your best guess based on the available information. Always return a response, even if you're not completely certain. If the context doesn't contain relevant information, use your general knowledge to provide a plausible answer. Clearly state when you're making an educated guess.
-
-	{{.context}}
-
-	Question: {{.question}}
-	Helpful Answer:`
 	qaPromptSelector := chains.ConditionalPromptSelector{
 		DefaultPrompt: prompts.NewPromptTemplate(
-			myStuffQATemplate,
+			chat.MyStuffQAPromptTemplate,
 			[]string{"context", "question"},
 		),
 	}
