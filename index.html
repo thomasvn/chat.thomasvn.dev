@@ -46,14 +46,14 @@
 
                     if (response.ok) {
                         const data = await response.text();
-                        addMessage('Bot', data);
+                        addMessage('Thomas Bot', data);
                     } else {
                         console.error('Error:', response.statusText);
-                        addMessage('Bot', 'Sorry, there was an error processing your request.');
+                        addMessage('Thomas Bot', 'Sorry, there was an error processing your request.');
                     }
                 } catch (error) {
                     console.error('Error:', error);
-                    addMessage('Bot', 'Sorry, there was an error processing your request.');
+                    addMessage('ThomasBot', 'Sorry, there was an error processing your request.');
                 }
             }
         }

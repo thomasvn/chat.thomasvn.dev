@@ -49,19 +49,17 @@ go run pkg/cmd/main.go "What has Thomas written about regarding Formula1?"
 
 <!-- 
 IDEAS
+- Logging of what chats are being sent.
 - Actual chat functionality. Ability to go back and forth with messages.
 - Move GoogleCloudFunction into its own package? Would that still work?
-- RAG (retrieval augmented API). Pull contents of all my blog posts. Make it a chat interface.
-  - Serverless API can't be cloning the Repo every time. Should I put all my data onto a GCP bucket?
-  - Make it a chat interface, where you can follow up on questions
-  - https://github.com/tmc/langchaingo/blob/main/examples/document-qa-example/document_qa.go
-  - https://github.com/tmc/langchaingo/blob/main/examples/chroma-vectorstore-example/chroma_vectorstore_example.go
 - Pull contents of all Kubecost codebases & docs
-- Build as a serverless container
+- Build as a serverless container?
+- https://www.val.town/
 -->
 
 <!-- 
 DONE (most recent to least recent)
+- Better prompting. Return chat as "Thomas" and talk in Thomas's voice.
 - Enhance responses provided by OpenAI. Give the bot the ability to extrapolate. Custom prompt. GPT4o mini.
 - Translate the HTML docs to Markdown. Reduces tokens.
 - Deploy `chat.thomasvn.dev` site via Netlify
